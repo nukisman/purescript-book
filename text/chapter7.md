@@ -545,7 +545,7 @@ traverse :: forall a b f. Applicative f => (a -> f b) -> Array a -> f (Array b)
 
 Intuitively, given any applicative functor `f`, and a function which takes a value of type `a` and returns a value of type `b` (with side-effects tracked by `f`), we can apply the function to each element of an array of type `Array a` to obtain a result of type `Array b` (with side-effects tracked by `f`).
 
-Still not clear? Let's specialize further to the case where `m` is the `V Errors` applicative functor above. Now, we have a function of type
+Still not clear? Let's specialize further to the case where `f` is the `V Errors` applicative functor above. Now, we have a function of type
 
 ```haskell
 traverse :: forall a b. (a -> V Errors b) -> Array a -> V Errors (Array b)
@@ -586,13 +586,13 @@ But there are more examples of traversable functors than just arrays and lists. 
 > import Data.Traversable
 
 > traverse (nonEmpty "Example") Nothing
-(Valid Nothing)
+(pure Nothing)
 
 > traverse (nonEmpty "Example") (Just "")
-(Invalid ["Field 'Example' cannot be empty"])
+(pure ["Field 'Example' cannot be empty"])
 
 > traverse (nonEmpty "Example") (Just "Testing")
-(Valid (Just unit))
+(pure (Just unit))
 ```
 
 These examples show that traversing the `Nothing` value returns `Nothing` with no validation, and traversing `Just x` uses the validation function to validate `x`. That is, `traverse` takes a validation function for type `a` and returns a validation function for `Maybe a`, i.e. a validation function for optional values of type `a`.
